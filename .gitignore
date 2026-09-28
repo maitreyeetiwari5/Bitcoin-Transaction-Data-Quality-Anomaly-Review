@@ -1,0 +1,8 @@
+data/raw/*
+data/json/*
+data/synthetic/
+outputs/*
+!**/.gitkeep
+__pycache__/
+.pytest_cache/
+*.db
