@@ -76,7 +76,7 @@ every excluded record is accounted for.
 **Step 1: robust z-scores.** For every feature, within each time step:
 
 ```
-robust z = 0.6745 × (value − median) / MAD
+robust z = 0.6745 × (value - median) / MAD
 ```
 
 The median and MAD are used instead of the mean and standard deviation because a handful
@@ -115,7 +115,7 @@ and a list of outputs. After flattening, the pipeline checks for every non-coinb
 transaction that:
 
 ```
-sum(input values) − sum(output values) = reported fee
+sum(input values) - sum(output values) = reported fee
 ```
 
 Any difference is logged as a break. Coinbase transactions (the miner reward) have no real
@@ -143,9 +143,9 @@ counted and kept.
 | Column | Meaning |
 |---|---|
 | inputs_sats / outputs_sats | Summed input and output values, in satoshis |
-| implied_fee_sats | inputs − outputs |
+| implied_fee_sats | inputs - outputs |
 | fee_sats | Fee reported by the API |
-| difference_sats | implied − reported; 0 means it ties out |
+| difference_sats | implied - reported; 0 means it ties out |
 
 ## Assumptions
 
