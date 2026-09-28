@@ -16,7 +16,7 @@ Bitcoin transactions in JSON** pulled from the public Blockstream Esplora API.
 | 1. Load | Reads the three Elliptic files without fixing anything, so every problem stays visible to the checks | — |
 | 2. Data quality checks | 13 checks across structure, keys, labels, cross-file reconciliation, and graph edges. Each check is logged whether it passes or fails | `Data Quality Log`, `Record Reconciliation` |
 | 3. SQL tie-out | Loads the raw tables into SQLite and recomputes the key checks with independent SQL queries. The two methods must agree | `SQL Tie-Out`, `Class Distribution (SQL)` |
-| 4. Anomaly flags | Robust z-scores (median and MAD) per time step. Features are chosen on time steps 1–34 and results reported on 35–49, which the selection never saw | `Selected Features`, `Model Evaluation`, `By Time Step`, `Flagged Labeled` |
+| 4. Anomaly flags | Robust z-scores (median and MAD) per time step. Features are chosen on time steps 1-34 and results reported on 35-49, which the selection never saw | `Selected Features`, `Model Evaluation`, `By Time Step`, `Flagged Labeled` |
 | 5. Escalation | Flagged transactions with no label go to a review queue. The pipeline never labels them illicit | `Review Queue` |
 | 6. Raw JSON | Flattens nested transaction JSON into transactions, inputs, and outputs tables, then reconciles fees | `JSON Summary`, `Fee Reconciliation` |
 | 7. Reporting | One Excel exception report (summary built from live formulas) plus flat CSVs for Tableau | `outputs/` |
@@ -57,7 +57,7 @@ Synthetic data is for testing the code only. None of it is used in the results b
 | DQ01 | Features file has 167 columns | Flagged for review |
 | DQ02 | Missing txId or time_step | Row excluded |
 | DQ03 | Duplicate txId in features | First kept |
-| DQ04 | time_step outside 1–49 | Row excluded |
+| DQ04 | time_step outside 1-49 | Row excluded |
 | DQ05 | Missing feature values | Kept; nulls ignored in scoring |
 | DQ06 | Duplicate txId in classes | First label kept |
 | DQ07 | Class label not in {1, 2, unknown} | Treated as unknown (excluded from evaluation, not guessed) |
@@ -85,7 +85,7 @@ When more than half the values in a time step are identical (common for degree c
 MAD is zero, so the method falls back to the mean absolute deviation, scaled by 1.2533.
 
 **Step 2: choose features on the past, test on the future.** The data is split by time,
-as in the original Elliptic paper: time steps 1–34 are the training period and 35–49 are
+as in the original Elliptic paper: time steps 1-34 are the training period and 35-49 are
 the holdout period. Every feature is tested in both directions (unusually high, unusually
 low) on the training period only, and the most precise are kept (at least 10% recall,
 near-duplicates skipped). The chosen features and their training scores are listed in the
@@ -95,7 +95,7 @@ near-duplicates skipped). The chosen features and their training scores are list
 breach the threshold (|z| > 3.5). All settings are in `config.py`.
 
 **Step 4: report on the holdout period.** The headline precision and recall come from time
-steps 35–49, which played no part in choosing the features. Training-period results are
+steps 35-49, which played no part in choosing the features. Training-period results are
 shown alongside for comparison; a large gap between the two would signal overfitting.
 
 **Why not just flag the most extreme transactions?** That was the first version, and it
@@ -129,7 +129,7 @@ counted and kept.
 | Column | Meaning |
 |---|---|
 | txId | Elliptic transaction ID (anonymized) |
-| time_step | Elliptic time step, 1–49, roughly two weeks each |
+| time_step | Elliptic time step, 1-49, roughly two weeks each |
 | label | illicit, licit, or unknown (Flagged Labeled only) |
 | period | train (1-34) or holdout (35-49) (Flagged Labeled only) |
 | anomaly_score | Largest robust z-score across the selected features, in their flagged direction |
@@ -181,10 +181,10 @@ Blockstream Esplora API:
 
 - **Data quality:** 13 checks run on 203,769 transactions and 234,355 edges; all passed,
   and all 4 SQL tie-outs match the pandas results.
-- **Anomaly flags (holdout, time steps 35–49):** 35.4% precision vs. a 6.5% baseline
+- **Anomaly flags (holdout, time steps 35-49):** 35.4% precision vs. a 6.5% baseline
   illicit rate (5.4x lift), 50.4% recall. Training-period precision was 46.7%, so the
   rules held up reasonably well on data they had never seen.
-- **Time steps 43+:** precision falls from 33–66% to near zero, matching the dark market
+- **Time steps 43+:** precision falls from 33-66% to near zero, matching the dark market
   shutdown reported by Weber et al. (2019). Rules learned from the past need regular
   re-validation.
 - **Escalation:** 12,636 unlabeled transactions routed to the review queue, ranked by
